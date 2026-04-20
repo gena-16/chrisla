@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>translate</title>
+    <link rel="stylesheet" href="trans.css">
+</head>
+<body>
+    
+    <div class="container">
+        <h1>TranslateX</h1>
+        <div class="input-area">
+            <div class="box">
+                <div class="box-container">
+                    <select name="" id="sourceLang">
+                        <option value=""></option>
+                        <option value="de">Allemand(Allemagne)</option>
+                        <option value="en">Anglais(É.-U.)</option>
+                        <option value="en">Anglais(R.-U.)</option>
+                        <option value="zh">Chinois(Mandarin-Chine continentale)</option>
+                        <option value="zh">Chinois(Mandarin-Taiwan)</option>
+                        <option value="ko">Coréen</option>
+                        <option value="es">Espagnol(Espagne)</option>
+                        <option value="fr">Français(France)</option>
+                        <option value="id">Indonésien</option>
+                        <option value="it">Italien</option>
+                        <option value="ja">Japonais</option>
+                        <option value="nl">Néerlandais</option>
+                        <option value="pol">Polonais</option>
+                        <option value="por">Portugais(Brésil)</option>
+                        <option value="ru">Russe</option>
+                        <option value="th">Thai</option>
+                        <option value="tr">Turc</option>
+                        <option value="vi">Vietnamien</option>
+                    </select>
+                    <button id="change">🔄</button>
+                    
+                    <select name="" id="targetLang">
+                        <option value=""></option>
+                        <option value="de">Allemand(Allemagne)</option>
+                        <option value="en">Anglais(É.-U.)</option>
+                        <option value="en">Anglais(R.-U.)</option>
+                        <option value="zh">Chinois(Mandarin-Chine continentale)</option>
+                        <option value="zh">Chinois(Mandarin-Taiwan)</option>
+                        <option value="ko">Coréen</option>
+                        <option value="es">Espagnol(Espagne)</option>
+                        <option value="fr">Français(France)</option>
+                        <option value="id">Indonésien</option>
+                        <option value="it">Italien</option>
+                        <option value="ja">Japonais</option>
+                        <option value="nl">Néerlandais</option>
+                        <option value="pol">Polonais</option>
+                        <option value="por">Portugais(Brésil)</option>
+                        <option value="ru">Russe</option>
+                        <option value="th">Thai</option>
+                        <option value="tr">Turc</option>
+                        <option value="vi">Vietnamien</option>
+                    </select>
+                </div>
+
+            <h2><span class="blue">.</span>TEXTE ORIGINAL</h2>
+            <textarea  id="textToTranslate" placeholder="Saississez votre texte ici..."></textarea>
+            <h3><span class="bleu">.</span>TRADUCTION</h3>
+            <div class="output-area">
+                <div class="result-box">
+                    <p id="resultatText">la traduction apparaîtra ici...</p>
+                    
+                </div>
+                <div class="actions">
+                        <button id="copyBtn">📋 Copier</button>
+                         <button id="speakBtn">🔊 Lire</button>
+                     </div>
+                
+                <button type="button" id="translateBtn">Traduire</button>
+                <div class="history">
+                    <h3>Historique</h3>
+                    <ul id="historyList"></ul>
+                    <button id="clearHistory">🗑️ Effacer</button>
+                 </div>
+
+
+             </div>
+        </div>
+       
+    </div>
+</div>
+<!--
+<script>
+document.getElementById('translateBtn').addEventListener('click', function () {
+    const text = document.getElementById('textToTranslate').value;
+    const sourceLang = document.getElementById('sourceLang').value;
+    const targetLang = document.getElementById('targetLang').value;
+    const resultDisplay = document.getElementById('resultatText');
+
+    if (!text) {
+        alert("Veuillez entrer du texte");
+        return;
+    }
+
+    if (!sourceLang || !targetLang) {
+        alert("Veuillez choisir les langues");
+        return;
+    }
+
+    resultDisplay.innerText = "Traduction en cours...";
+
+    const apiUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${sourceLang}|${targetLang}`;
+
+    fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+            if (data.responseData) {
+                resultDisplay.innerText = data.responseData.translatedText;
+            } else {
+                resultDisplay.innerText = "Erreur de traduction.";
+            }
+        })
+        .catch(error => {
+            console.error("Erreur:", error);
+            resultDisplay.innerText = "Connexion impossible au serveur.";
+        });
+});
+</script>-->
+<script>
+    let historyData = JSON.parse(localStorage.getItem("history")) || [];
+    const historyList = document.getElementById('historyList');
+
+document.getElementById('translateBtn').addEventListener('click', function () {
+    const text = document.getElementById('textToTranslate').value;
+    const sourceLang = document.getElementById('sourceLang').value;
+    const targetLang = document.getElementById('targetLang').value;
+    const resultDisplay = document.getElementById('resultatText');
+
+    if (!text) {
+        alert("Veuillez entrer du texte");
+        return;
+    }
+
+    if (!sourceLang || !targetLang) {
+    alert("Veuillez choisir les langues");
+    return;
+}
+
+    resultDisplay.innerText = "Traduction en cours...";
+
+    const apiUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${sourceLang}|${targetLang}`;
+
+    fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+            const translated = data.responseData.translatedText;
+            resultDisplay.innerText = translated;
+
+            // Ajouter à l'historique
+            const li = document.createElement('li');
+            li.textContent = `${text} ➜ ${translated}`;
+            historyData.push(`${text} ➜ ${translated}`);
+            localStorage.setItem("history", JSON.stringify(historyData));
+            
+            historyList.appendChild(li);
+            historyData.forEach(item => {
+    const li = document.createElement('li');
+    li.textContent = item;
+    historyList.appendChild(li);
+});
+            
+        })
+        .catch(error => {
+            resultDisplay.innerText = "Erreur.";
+        });
+});
+
+
+// 📋 Copier
+document.getElementById('copyBtn').addEventListener('click', () => {
+    const text = document.getElementById('resultatText').innerText;
+    navigator.clipboard.writeText(text);
+    alert("Copié !");
+});
+
+
+// 🔊 Lecture vocale
+document.getElementById('speakBtn').addEventListener('click', () => {
+    const text = document.getElementById('resultatText').innerText;
+
+    const speech = new SpeechSynthesisUtterance(text);
+    speech.lang = targetLang + "-US"; // ou "-FR" selon besoin
+
+    speechSynthesis.speak(speech);
+});
+
+
+// 🗑️ Effacer historique
+document.getElementById('clearHistory').addEventListener('click', () => {
+    historyList.innerHTML = "";
+localStorage.removeItem("history");
+});
+
+document.getElementById('change').addEventListener('click', () => {
+    const source = document.getElementById('sourceLang');
+    const target = document.getElementById('targetLang');
+
+    // échanger les valeurs
+    let temp = source.value;
+    source.value = target.value;
+    target.value = temp;
+});
+</script>
+</body>
+</html>
